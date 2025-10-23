@@ -55,36 +55,7 @@ void Game::UpdateModel()
 			player2y += playerspeed;
 		}
 		player2y = ClampScreenY(player2y, playerheight);
-		ballx += ballxspeed;
-		bally += ballyspeed;
-		ballx = ClampScreenX(ballx, ballwidth);
-		bally = ClampScreenY(bally, ballheight);
-		if (ballx == gfx.ScreenWidth - 1 - ballwidth) {
-			ballx = 400;
-			bally = 0;
-			ballxspeed = -ballxspeed;
-			ballyspeed = -ballyspeed;
-			playerscore += 1;
-		}
-		if (ballx == 0) {
-			ballx = 400;
-			bally = 0;
-			ballxspeed = -ballxspeed;
-			ballyspeed = -ballyspeed;
-			player2score += 1;
-		}
-		if (bally == 0) {
-			ballyspeed = -ballyspeed;
-		}
-		if (bally == gfx.ScreenHeight - 1 - ballheight) {
-			ballyspeed = -ballyspeed;
-		}
-		if (IsColliding(ballx, bally, ballwidth, ballheight, playerx, playery, playerwidth, playerheight)) {
-			ballxspeed = -ballxspeed;
-		}
-		if (IsColliding(ballx, bally, ballwidth, ballheight, player2x, player2y, playerwidth, playerheight)) {
-			ballxspeed = -ballxspeed;
-		}
+		MoveBall();
 	}
 	else {
 		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
@@ -103,46 +74,7 @@ void Game::ComposeFrame()
 		DrawPlayer2();
 		DrawBall();
 		DrawNet();
-		if (playerscore == 0) {
-			DrawZero(playerscorex, playerscorey);
-		}
-		if (playerscore == 1) {
-			DrawOne(playerscorex, playerscorey);
-		}
-		if (playerscore == 2) {
-			DrawTwo(playerscorex, playerscorey);
-		}
-		if (playerscore == 3) {
-			DrawThree(playerscorex, playerscorey);
-			ballxspeed = 0;
-			ballyspeed = 0;
-			playerspeed = 0;
-			DrawP1Win();
-			DrawStart(185, 300);
-			if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
-				Reset();
-			}
-		}
-		if (player2score == 0) {
-			DrawZero(player2scorex, player2scorey);
-		}
-		if (player2score == 1) {
-			DrawOne(player2scorex, player2scorey);
-		}
-		if (player2score == 2) {
-			DrawTwo(player2scorex, player2scorey);
-		}
-		if (player2score == 3) {
-			DrawThree(player2scorex, player2scorey);
-			ballxspeed = 0;
-			ballyspeed = 0;
-			playerspeed = 0;
-			DrawP2Win();
-			DrawStart(p2winx - 10, p2winy + 25);
-			if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
-				Reset();
-			}
-		}
+		DrawScore();
 	}
 }
 
@@ -1478,6 +1410,46 @@ void Game::DrawThree(int x, int y)
 	gfx.PutPixel(x + 15, y + 25, scorered, scoregreen, scoreblue);
 }
 
+void Game::DrawScore()
+{
+	if (playerscore == 0) {
+		DrawZero(playerscorex, playerscorey);
+	}
+	if (playerscore == 1) {
+		DrawOne(playerscorex, playerscorey);
+	}
+	if (playerscore == 2) {
+		DrawTwo(playerscorex, playerscorey);
+	}
+	if (playerscore == 3) {
+		DrawThree(playerscorex, playerscorey);
+		Stop();
+		DrawP1Win();
+		DrawStart(185, 300);
+		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
+			Reset();
+		}
+	}
+	if (player2score == 0) {
+		DrawZero(player2scorex, player2scorey);
+	}
+	if (player2score == 1) {
+		DrawOne(player2scorex, player2scorey);
+	}
+	if (player2score == 2) {
+		DrawTwo(player2scorex, player2scorey);
+	}
+	if (player2score == 3) {
+		DrawThree(player2scorex, player2scorey);
+		Stop();
+		DrawP2Win();
+		DrawStart(p2winx - 10, p2winy + 25);
+		if (wnd.kbd.KeyIsPressed(VK_RETURN)) {
+			Reset();
+		}
+	}
+}
+
 void Game::DrawBall()
 {
 	//Üst kenar
@@ -1500,6 +1472,40 @@ void Game::DrawBall()
 	gfx.PutPixel(ballx + 1, bally + 4, 255, 255, 255);
 	gfx.PutPixel(ballx + 2, bally + 4, 255, 255, 255);
 	gfx.PutPixel(ballx + 3, bally + 4, 255, 255, 255);
+}
+
+void Game::MoveBall()
+{
+	ballx += ballxspeed;
+	bally += ballyspeed;
+	ballx = ClampScreenX(ballx, ballwidth);
+	bally = ClampScreenY(bally, ballheight);
+	if (ballx == gfx.ScreenWidth - 1 - ballwidth) {
+		ballx = 400;
+		bally = 0;
+		ballxspeed = -ballxspeed;
+		ballyspeed = -ballyspeed;
+		playerscore += 1;
+	}
+	if (ballx == 0) {
+		ballx = 400;
+		bally = 0;
+		ballxspeed = -ballxspeed;
+		ballyspeed = -ballyspeed;
+		player2score += 1;
+	}
+	if (bally == 0) {
+		ballyspeed = -ballyspeed;
+	}
+	if (bally == gfx.ScreenHeight - 1 - ballheight) {
+		ballyspeed = -ballyspeed;
+	}
+	if (IsColliding(ballx, bally, ballwidth, ballheight, playerx, playery, playerwidth, playerheight)) {
+		ballxspeed = -ballxspeed;
+	}
+	if (IsColliding(ballx, bally, ballwidth, ballheight, player2x, player2y, playerwidth, playerheight)) {
+		ballxspeed = -ballxspeed;
+	}
 }
 
 int Game::ClampScreenX(int x, int width)
@@ -1551,4 +1557,11 @@ void Game::Reset()
 	ballxspeed = 3;
 	ballyspeed = 3;
 	playerspeed = 4;
+}
+
+void Game::Stop()
+{
+	ballxspeed = 0;
+	ballyspeed = 0;
+	playerspeed = 0;
 }

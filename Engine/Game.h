@@ -47,11 +47,14 @@ private:
 	void DrawOne(int x, int y);
 	void DrawTwo(int x, int y);
 	void DrawThree(int x, int y);
+	void DrawScore();
 	void DrawBall();
+	void MoveBall();
 	int ClampScreenX(int x, int w);
 	int ClampScreenY(int y, int h);
 	bool IsColliding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1);
 	void Reset();
+	void Stop();
 private:
 	MainWindow& wnd;
 	Graphics gfx;
